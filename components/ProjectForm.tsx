@@ -1,5 +1,6 @@
 import { PROJECT_CATEGORIES } from "@/lib/constants";
 import { Field, inputClass } from "@/components/ui";
+import ProjectImageField from "@/components/ProjectImageField";
 
 type ProjectFormProps = {
   action: (formData: FormData) => Promise<void>;
@@ -106,13 +107,10 @@ export default function ProjectForm({ action, cities, developers, project }: Pro
             <option value="SOLD_OUT">Sold out</option>
           </select>
         </Field>
-        <Field label="Cover image">
-          <select name="image" defaultValue={project?.image ?? "/images/capital.jpg"} className={inputClass}>
-            {IMAGES.map((image) => (
-              <option key={image.value} value={image.value}>{image.label}</option>
-            ))}
-          </select>
-        </Field>
+        <ProjectImageField
+          defaultValue={project?.image ?? IMAGES[0].value}
+          presets={IMAGES}
+        />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
