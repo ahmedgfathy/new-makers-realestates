@@ -46,8 +46,8 @@ export default function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-4 md:flex">
-          <a href="tel:+201001234567" className="text-sm text-white/80 transition hover:text-gold">
-            +20 100 123 4567
+          <a href="tel:+201116204890" className="text-sm text-white/80 transition hover:text-gold">
+            +20 111 620 4890
           </a>
           <Link
             href="/login"

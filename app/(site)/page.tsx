@@ -258,8 +258,8 @@ export default async function HomePage() {
               with a shortlist, payment plans and honest advice on delivery risk.
             </p>
             <div className="mt-8 space-y-3 text-sm text-white/70">
-              <p><span className="text-white/40">Call</span> · <a href="tel:+201001234567" className="hover:text-gold">+20 100 123 4567</a></p>
-              <p><span className="text-white/40">WhatsApp</span> · <a href="https://wa.me/+201001234567" className="hover:text-gold">+20 100 123 4567</a></p>
+              <p><span className="text-white/40">Call</span> · <a href="tel:+201116204890" className="hover:text-gold">+20 111 620 4890</a></p>
+              <p><span className="text-white/40">WhatsApp</span> · <a href="https://wa.me/201025080764" className="hover:text-gold">+20 102 508 0764</a></p>
               <p><span className="text-white/40">Email</span> · <a href="mailto:hello@makersrealestate.com" className="hover:text-gold">hello@makersrealestate.com</a></p>
             </div>
           </div>

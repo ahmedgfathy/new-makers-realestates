@@ -118,7 +118,7 @@ export default async function ProjectDetailPage({
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
-                  href={`https://wa.me/+201001234567?text=${encodeURIComponent(
+                  href={`https://wa.me/201025080764?text=${encodeURIComponent(
                     `I would like to know more about ${project.name}`
                   )}`}
                   className="rounded-sm bg-ink px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-gold hover:text-ink"
@@ -126,10 +126,10 @@ export default async function ProjectDetailPage({
                   WhatsApp about this project
                 </a>
                 <a
-                  href="tel:+201001234567"
+                  href="tel:+201116204890"
                   className="rounded-sm border border-ink/20 px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:border-gold hover:text-gold"
                 >
-                  Call +20 100 123 4567
+                  Call +20 111 620 4890
                 </a>
               </div>
             </div>

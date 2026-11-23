@@ -20,7 +20,7 @@ export default function SiteFooter() {
           <div className="mt-6 flex gap-3 text-xs uppercase tracking-[0.2em] text-white/50">
             <a href="https://www.facebook.com/makersrealestate" className="hover:text-gold">FB</a>
             <a href="https://www.instagram.com/makersrealestate" className="hover:text-gold">IG</a>
-            <a href="https://wa.me/+201001234567" className="hover:text-gold">WA</a>
+            <a href="https://wa.me/201025080764" className="hover:text-gold">WA</a>
           </div>
         </div>
 
@@ -47,12 +47,12 @@ export default function SiteFooter() {
         <div>
           <p className="eyebrow text-gold">Get in touch</p>
           <ul className="mt-5 space-y-3 text-sm text-white/70">
-            <li><a href="tel:+201001234567" className="hover:text-gold">+20 100 123 4567</a></li>
+            <li><a href="tel:+201116204890" className="hover:text-gold">+20 111 620 4890</a></li>
             <li><a href="mailto:hello@makersrealestate.com" className="hover:text-gold">hello@makersrealestate.com</a></li>
             <li className="text-white/50">New Cairo, Egypt</li>
           </ul>
           <a
-            href="https://wa.me/+201001234567"
+            href="https://wa.me/201025080764"
             className="mt-6 inline-block rounded-sm bg-gold px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-ink"
           >
             WhatsApp us

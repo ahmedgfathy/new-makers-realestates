@@ -30,8 +30,8 @@ export default async function ContactPage({
         <div className="container-x grid gap-10 lg:grid-cols-[1fr_1.1fr]">
           <div className="space-y-8">
             {[
-              { label: "Phone", value: "+20 100 123 4567", href: "tel:+201001234567" },
-              { label: "WhatsApp", value: "+20 100 123 4567", href: "https://wa.me/+201001234567" },
+              { label: "Phone", value: "+20 111 620 4890", href: "tel:+201116204890" },
+              { label: "WhatsApp", value: "+20 102 508 0764", href: "https://wa.me/201025080764" },
               { label: "Email", value: "hello@makersrealestate.com", href: "mailto:hello@makersrealestate.com" },
             ].map((item) => (
               <div key={item.label} className="border-b border-ink/10 pb-6">
