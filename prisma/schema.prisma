@@ -1,0 +1,106 @@
+// Makers Real Estates — real estate CRM schema (SQLite)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("AGENT") // ADMIN | AGENT
+  phone        String?
+  createdAt    DateTime @default(now())
+
+  leads     Lead[]     @relation("AssignedLeads")
+  created   Lead[]     @relation("CreatedLeads")
+}
+
+model City {
+  id           String    @id @default(cuid())
+  name         String
+  nameAr       String?
+  slug         String    @unique
+  projectCount Int       @default(0)
+  description  String?
+  image        String?
+  projects     Project[]
+  leads        Lead[]
+}
+
+model Developer {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  website     String?
+  projects    Project[]
+}
+
+model Project {
+  id              String    @id @default(cuid())
+  name            String
+  slug            String    @unique
+  description     String?
+  cityId          String
+  developerId     String?
+  category        String    @default("Residential") // Residential | Commercial | Administrative | Medical | Coastal
+  unitTypes       String?   // "Apartments, Townhouses, Villas"
+  unitArea        String?   // "140 sqm"
+  sourceUrl       String?
+  priceFrom       Int?
+  pricePerSqm     Int?
+  downPayment     Int?      // percent
+  installmentYears Int?
+  deliveryDate    String?
+  image           String?
+  featured        Boolean   @default(false)
+  status          String    @default("AVAILABLE") // AVAILABLE | COMING_SOON | SOLD_OUT
+  createdAt       DateTime  @default(now())
+
+  city      City      @relation(fields: [cityId], references: [id])
+  developer Developer? @relation(fields: [developerId], references: [id])
+  leads     Lead[]
+
+  @@index([cityId])
+}
+
+model Lead {
+  id           String   @id @default(cuid())
+  name         String
+  email        String?
+  phone        String
+  source       String   @default("WEBSITE") // WEBSITE | WHATSAPP | PHONE | REFERRAL | WALK_IN
+  status       String   @default("NEW") // NEW | CONTACTED | QUALIFIED | VISIT | NEGOTIATION | WON | LOST
+  budget       Int?
+  message      String?
+  projectId    String?
+  cityId       String?
+  assignedToId String
+  createdById  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  project    Project? @relation(fields: [projectId], references: [id])
+  city       City?    @relation(fields: [cityId], references: [id])
+  assignedTo User     @relation("AssignedLeads", fields: [assignedToId], references: [id])
+  createdBy  User     @relation("CreatedLeads", fields: [createdById], references: [id])
+  activities Activity[]
+
+  @@index([status])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  leadId    String
+  type      String   @default("NOTE") // NOTE | CALL | EMAIL | MEETING | STATUS
+  body      String
+  createdAt DateTime @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+}

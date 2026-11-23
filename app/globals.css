@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #081726;
+  --color-ink-soft: #10293f;
+  --color-ink-line: #1d3a53;
+  --color-sand: #f7f4ed;
+  --color-sand-deep: #ece5d7;
+  --color-gold: #c39a4a;
+  --color-gold-soft: #e4cd9c;
+  --color-slate-ink: #5d6d7b;
+
+  --font-display: Georgia, "Times New Roman", "Songti SC", serif;
+  --font-sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-sand);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: #fff;
+  }
+}
+
+@utility container-x {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 80rem;
+  padding-inline: 1.25rem;
+
+  @media (min-width: 768px) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+@utility card-hover {
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 50px -30px rgba(8, 23, 38, 0.5);
+}
+
+.hairline {
+  border-color: color-mix(in srgb, var(--color-ink) 12%, transparent);
+}
