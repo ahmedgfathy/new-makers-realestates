@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { upload } from "@vercel/blob/client";
 import { Field, inputClass } from "@/components/ui";
 
 type ImageInputProps = {
@@ -12,34 +13,45 @@ type ImageInputProps = {
   hint?: string;
 };
 
+const MAX_IMAGE_MB = 25;
+
 export default function ImageInput({
   name = "image",
   label = "Cover image",
   defaultValue = "",
   presets = [],
   allowEmpty = false,
-  hint = "JPG, PNG, WebP or AVIF up to 4 MB.",
+  hint = "JPG, PNG, WebP or AVIF.",
 }: ImageInputProps) {
   const [url, setUrl] = useState(defaultValue);
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
 
-  async function upload(file: File) {
+  async function uploadImage(file: File) {
+    if (file.size > MAX_IMAGE_MB * 1024 * 1024) {
+      setError(`Images must be ${MAX_IMAGE_MB} MB or smaller.`);
+      if (fileInput.current) fileInput.current.value = "";
+      return;
+    }
+
     setUploading(true);
     setError("");
-    const body = new FormData();
-    body.append("file", file);
+    setProgress(0);
 
     try {
-      const response = await fetch("/api/project-image", { method: "POST", body });
-      const data = (await response.json().catch(() => ({}))) as { url?: string; error?: string };
-      if (!response.ok || !data.url) throw new Error(data.error ?? "Upload failed.");
-      setUrl(data.url);
+      const blob = await upload(`images/${file.name}`, file, {
+        access: "public",
+        handleUploadUrl: "/api/media/upload",
+        onUploadProgress: ({ percentage }) => setProgress(Math.round(percentage)),
+      });
+      setUrl(blob.url);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Upload failed.");
     } finally {
       setUploading(false);
+      setProgress(0);
       if (fileInput.current) fileInput.current.value = "";
     }
   }
@@ -68,12 +80,14 @@ export default function ImageInput({
               disabled={uploading}
               onChange={(event) => {
                 const file = event.target.files?.[0];
-                if (file) void upload(file);
+                if (file) void uploadImage(file);
               }}
               className="block w-full text-sm text-slate-ink file:mr-3 file:rounded-sm file:border-0 file:bg-ink file:px-4 file:py-2 file:text-[11px] file:font-semibold file:uppercase file:tracking-[0.16em] file:text-paper disabled:opacity-60"
             />
             <p className="text-xs text-slate-ink/70">
-              {uploading ? "Uploading to Vercel Blob…" : `${hint} Uploading replaces the current image.`}
+              {uploading
+                ? `Uploading… ${progress}%`
+                : `${hint} Up to ${MAX_IMAGE_MB} MB — uploaded straight to Vercel Blob.`}
             </p>
             {presets.length > 0 && (
               <select
