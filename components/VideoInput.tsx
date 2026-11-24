@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { upload } from "@vercel/blob/client";
+import { useState } from "react";
 import { Field, inputClass } from "@/components/ui";
 import { isVideoFile, videoEmbedUrl } from "@/lib/media";
 
@@ -18,30 +17,7 @@ export default function VideoInput({
 }: VideoInputProps) {
   const [url, setUrl] = useState(defaultValue);
   const [link, setLink] = useState("");
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
-  const fileInput = useRef<HTMLInputElement>(null);
-
-  async function uploadVideo(file: File) {
-    setUploading(true);
-    setError("");
-    setProgress(0);
-    try {
-      const blob = await upload(`media/${file.name}`, file, {
-        access: "public",
-        handleUploadUrl: "/api/media/upload",
-        onUploadProgress: ({ percentage }) => setProgress(Math.round(percentage)),
-      });
-      setUrl(blob.url);
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Upload failed.");
-    } finally {
-      setUploading(false);
-      setProgress(0);
-      if (fileInput.current) fileInput.current.value = "";
-    }
-  }
 
   function applyLink() {
     const value = link.trim();
@@ -84,28 +60,17 @@ export default function VideoInput({
             </p>
           )}
 
-          <input
-            ref={fileInput}
-            type="file"
-            accept="video/mp4,video/webm,video/quicktime"
-            disabled={uploading}
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              if (file) void uploadVideo(file);
-            }}
-            className="block w-full text-sm text-slate-ink file:mr-3 file:rounded-sm file:border-0 file:bg-ink file:px-4 file:py-2 file:text-[11px] file:font-semibold file:uppercase file:tracking-[0.16em] file:text-paper disabled:opacity-60"
-          />
-          <p className="text-xs text-slate-ink/70">
-            {uploading
-              ? `Uploading… ${progress}%`
-              : "MP4, WebM or MOV up to 100 MB — uploaded straight to Vercel Blob."}
-          </p>
-
           <div className="flex flex-col gap-2 sm:flex-row">
             <input
               value={link}
               onChange={(event) => setLink(event.target.value)}
-              placeholder="…or paste a YouTube / Vimeo / .mp4 link"
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  applyLink();
+                }
+              }}
+              placeholder="Paste a YouTube / Vimeo / .mp4 link"
               className={inputClass}
             />
             <button
@@ -116,6 +81,10 @@ export default function VideoInput({
               Use link
             </button>
           </div>
+          <p className="text-xs text-slate-ink/70">
+            Videos are linked, not uploaded. Paste a YouTube or Vimeo page link, or a direct{" "}
+            .mp4 / .webm URL.
+          </p>
 
           {url && (
             <button
