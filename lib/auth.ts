@@ -58,3 +58,10 @@ export async function requireUser() {
   if (!user) redirect("/login");
   return user;
 }
+
+/** Signed-in admin only; agents are sent back to the overview. */
+export async function requireAdmin() {
+  const user = await requireUser();
+  if (user.role !== "ADMIN") redirect("/dashboard");
+  return user;
+}

@@ -1,9 +1,17 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { Field, PageHeader, inputClass } from "@/components/ui";
 import { changePassword, updateProfile } from "../actions";
 
 export const dynamic = "force-dynamic";
+
+const ERROR_MESSAGES: Record<string, string> = {
+  short: "The new password must be at least 8 characters.",
+  invalid: "Your current password is incorrect.",
+  email: "Enter a valid email address.",
+  taken: "That email is already used by another account.",
+};
 
 export default async function SettingsPage({
   searchParams,
@@ -19,7 +27,21 @@ export default async function SettingsPage({
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Account" title="Settings" description="Manage your profile and team access." />
+      <PageHeader
+        eyebrow="Account"
+        title="Settings"
+        description="Manage your profile, password and team access."
+        action={
+          user.role === "ADMIN" ? (
+            <Link
+              href="/dashboard/users"
+              className="rounded-sm border border-ink/20 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink transition hover:border-gold hover:text-gold"
+            >
+              Manage users
+            </Link>
+          ) : undefined
+        }
+      />
 
       {saved && (
         <p className="rounded-sm border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
@@ -28,9 +50,7 @@ export default async function SettingsPage({
       )}
       {error && (
         <p className="rounded-sm border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-          {error === "short"
-            ? "The new password must be at least 8 characters."
-            : "Your current password is incorrect."}
+          {ERROR_MESSAGES[error] ?? "Something went wrong."}
         </p>
       )}
 
@@ -38,12 +58,13 @@ export default async function SettingsPage({
         <form action={updateProfile} className="space-y-4 rounded-sm border border-ink/10 bg-white p-5">
           <h2 className="font-display text-lg">Profile</h2>
           <Field label="Name"><input name="name" defaultValue={user.name} className={inputClass} /></Field>
-          <Field label="Email">
-            <input defaultValue={user.email} readOnly className={`${inputClass} bg-sand/60 text-slate-ink`} />
+          <Field label="Email (used to sign in)">
+            <input name="email" type="email" defaultValue={user.email} className={inputClass} />
           </Field>
           <Field label="Phone"><input name="phone" defaultValue={user.phone ?? ""} className={inputClass} /></Field>
           <p className="text-xs text-slate-ink">
             Role: <span className="font-semibold text-ink">{user.role}</span>
+            {user.role !== "ADMIN" && " — ask an admin to change it."}
           </p>
           <button
             type="submit"
@@ -56,10 +77,10 @@ export default async function SettingsPage({
         <form action={changePassword} className="space-y-4 rounded-sm border border-ink/10 bg-white p-5">
           <h2 className="font-display text-lg">Change password</h2>
           <Field label="Current password">
-            <input name="current" type="password" required className={inputClass} />
+            <input name="current" type="password" required autoComplete="current-password" className={inputClass} />
           </Field>
           <Field label="New password">
-            <input name="next" type="password" required minLength={8} className={inputClass} />
+            <input name="next" type="password" required minLength={8} autoComplete="new-password" className={inputClass} />
           </Field>
           <button
             type="submit"

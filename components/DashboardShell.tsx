@@ -4,12 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-const LINKS = [
+const LINKS: { href: string; label: string; icon: string; adminOnly?: boolean }[] = [
   { href: "/dashboard", label: "Overview", icon: "▦" },
   { href: "/dashboard/leads", label: "Leads", icon: "◈" },
   { href: "/dashboard/projects", label: "Projects", icon: "▤" },
   { href: "/dashboard/developers", label: "Developers", icon: "◍" },
   { href: "/dashboard/areas", label: "Areas", icon: "◫" },
+  { href: "/dashboard/users", label: "Users", icon: "◔", adminOnly: true },
   { href: "/dashboard/settings", label: "Settings", icon: "◎" },
 ];
 
@@ -24,10 +25,11 @@ export default function DashboardShell({
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const links = LINKS.filter((link) => !link.adminOnly || user.role === "ADMIN");
 
   const nav = (
     <nav className="flex flex-col gap-1">
-      {LINKS.map((link) => {
+      {links.map((link) => {
         const active =
           link.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(link.href);
         return (
