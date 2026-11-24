@@ -98,14 +98,43 @@ export async function deleteLead(formData: FormData) {
 
 /* ------------------------------ PROJECTS ----------------------------- */
 
-async function uniqueProjectSlug(base: string, ignoreId?: string) {
-  let slug = slugify(base) || `project-${Date.now()}`;
+async function uniqueSlug(
+  base: string,
+  find: (slug: string) => Promise<{ id: string } | null>,
+  ignoreId?: string
+) {
+  const root = slugify(base) || `item-${Date.now()}`;
+  let slug = root;
   let suffix = 2;
   while (true) {
-    const existing = await prisma.project.findUnique({ where: { slug } });
+    const existing = await find(slug);
     if (!existing || existing.id === ignoreId) return slug;
-    slug = `${slugify(base)}-${suffix++}`;
+    slug = `${root}-${suffix++}`;
   }
+}
+
+const uniqueProjectSlug = (base: string, ignoreId?: string) =>
+  uniqueSlug(base, (slug) => prisma.project.findUnique({ where: { slug }, select: { id: true } }), ignoreId);
+
+const uniqueDeveloperSlug = (base: string, ignoreId?: string) =>
+  uniqueSlug(base, (slug) => prisma.developer.findUnique({ where: { slug }, select: { id: true } }), ignoreId);
+
+const uniqueCitySlug = (base: string, ignoreId?: string) =>
+  uniqueSlug(base, (slug) => prisma.city.findUnique({ where: { slug }, select: { id: true } }), ignoreId);
+
+/** Keeps City.projectCount (shown on the homepage) in step with real listings. */
+async function syncCityCounts() {
+  const cities = await prisma.city.findMany({
+    select: { id: true, _count: { select: { projects: true } } },
+  });
+  await prisma.$transaction(
+    cities.map((city) =>
+      prisma.city.update({
+        where: { id: city.id },
+        data: { projectCount: city._count.projects },
+      })
+    )
+  );
 }
 
 export async function saveProject(formData: FormData) {
@@ -130,6 +159,7 @@ export async function saveProject(formData: FormData) {
     deliveryDate: text(formData, "deliveryDate") || null,
     description: text(formData, "description") || null,
     image: text(formData, "image") || "/images/capital.jpg",
+    videoUrl: text(formData, "videoUrl") || null,
     status: text(formData, "status") || "AVAILABLE",
     featured: text(formData, "featured") === "on",
   };
@@ -145,6 +175,8 @@ export async function saveProject(formData: FormData) {
     });
   }
 
+  await syncCityCounts();
+
   revalidatePath("/");
   revalidatePath("/projects");
   revalidatePath("/dashboard");
@@ -155,7 +187,12 @@ export async function saveProject(formData: FormData) {
 export async function deleteProject(formData: FormData) {
   await requireUser();
   const id = text(formData, "id");
-  if (id) await prisma.project.delete({ where: { id } });
+  if (id) {
+    // Leads keep their history when a listing is removed.
+    await prisma.lead.updateMany({ where: { projectId: id }, data: { projectId: null } });
+    await prisma.project.delete({ where: { id } });
+    await syncCityCounts();
+  }
   revalidatePath("/");
   revalidatePath("/projects");
   revalidatePath("/dashboard/projects");
@@ -164,23 +201,103 @@ export async function deleteProject(formData: FormData) {
 
 /* ----------------------------- DEVELOPERS ---------------------------- */
 
-export async function createDeveloper(formData: FormData) {
+export async function saveDeveloper(formData: FormData) {
   await requireUser();
+
+  const id = text(formData, "id");
   const name = text(formData, "name");
   if (!name) redirect("/dashboard/developers?error=missing");
 
-  await prisma.developer.create({
-    data: {
-      name,
-      slug: slugify(name),
-      description: text(formData, "description") || null,
-      website: text(formData, "website") || null,
-    },
-  });
+  const data = {
+    name,
+    description: text(formData, "description") || null,
+    website: text(formData, "website") || null,
+    image: text(formData, "image") || null,
+    videoUrl: text(formData, "videoUrl") || null,
+  };
 
+  if (id) {
+    await prisma.developer.update({
+      where: { id },
+      data: { ...data, slug: await uniqueDeveloperSlug(name, id) },
+    });
+  } else {
+    await prisma.developer.create({
+      data: { ...data, slug: await uniqueDeveloperSlug(name) },
+    });
+  }
+
+  revalidatePath("/");
   revalidatePath("/developers");
+  revalidatePath("/projects");
   revalidatePath("/dashboard/developers");
   redirect("/dashboard/developers");
+}
+
+export async function deleteDeveloper(formData: FormData) {
+  await requireUser();
+  const id = text(formData, "id");
+  if (id) {
+    // Listings stay online, just without a developer attached.
+    await prisma.project.updateMany({ where: { developerId: id }, data: { developerId: null } });
+    await prisma.developer.delete({ where: { id } });
+  }
+  revalidatePath("/");
+  revalidatePath("/developers");
+  revalidatePath("/projects");
+  revalidatePath("/dashboard/developers");
+  redirect("/dashboard/developers");
+}
+
+/* -------------------------------- AREAS ------------------------------ */
+
+export async function saveCity(formData: FormData) {
+  await requireUser();
+
+  const id = text(formData, "id");
+  const name = text(formData, "name");
+  if (!name) redirect("/dashboard/areas?error=missing");
+
+  const data = {
+    name,
+    nameAr: text(formData, "nameAr") || null,
+    description: text(formData, "description") || null,
+    image: text(formData, "image") || null,
+  };
+
+  if (id) {
+    await prisma.city.update({
+      where: { id },
+      data: { ...data, slug: await uniqueCitySlug(name, id) },
+    });
+  } else {
+    await prisma.city.create({
+      data: { ...data, slug: await uniqueCitySlug(name), projectCount: 0 },
+    });
+  }
+
+  revalidatePath("/");
+  revalidatePath("/projects");
+  revalidatePath("/dashboard/areas");
+  redirect("/dashboard/areas");
+}
+
+export async function deleteCity(formData: FormData) {
+  await requireUser();
+  const id = text(formData, "id");
+  if (!id) redirect("/dashboard/areas");
+
+  const projectCount = await prisma.project.count({ where: { cityId: id } });
+  if (projectCount > 0) redirect("/dashboard/areas?error=in-use");
+
+  // Leads can outlive the area they were interested in.
+  await prisma.lead.updateMany({ where: { cityId: id }, data: { cityId: null } });
+  await prisma.city.delete({ where: { id } });
+
+  revalidatePath("/");
+  revalidatePath("/projects");
+  revalidatePath("/dashboard/areas");
+  redirect("/dashboard/areas");
 }
 
 /* ------------------------------ PROFILE ------------------------------ */

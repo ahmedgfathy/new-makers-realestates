@@ -1,6 +1,8 @@
 import { PROJECT_CATEGORIES } from "@/lib/constants";
+import { IMAGE_PRESETS } from "@/lib/media";
 import { Field, inputClass } from "@/components/ui";
-import ProjectImageField from "@/components/ProjectImageField";
+import ImageInput from "@/components/ImageInput";
+import VideoInput from "@/components/VideoInput";
 
 type ProjectFormProps = {
   action: (formData: FormData) => Promise<void>;
@@ -21,17 +23,11 @@ type ProjectFormProps = {
     deliveryDate: string | null;
     description: string | null;
     image: string | null;
+    videoUrl: string | null;
     status: string;
     featured: boolean;
   };
 };
-
-const IMAGES = [
-  { value: "/images/capital.jpg", label: "Capital compound" },
-  { value: "/images/coast.jpg", label: "Coastal resort" },
-  { value: "/images/villa.jpg", label: "Villa" },
-  { value: "/images/hero.jpg", label: "Aerial compound" },
-];
 
 export default function ProjectForm({ action, cities, developers, project }: ProjectFormProps) {
   return (
@@ -107,10 +103,7 @@ export default function ProjectForm({ action, cities, developers, project }: Pro
             <option value="SOLD_OUT">Sold out</option>
           </select>
         </Field>
-        <ProjectImageField
-          defaultValue={project?.image ?? IMAGES[0].value}
-          presets={IMAGES}
-        />
+        <ImageInput defaultValue={project?.image ?? IMAGE_PRESETS[0].value} presets={IMAGE_PRESETS} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -135,6 +128,10 @@ export default function ProjectForm({ action, cities, developers, project }: Pro
       <Field label="Description">
         <textarea name="description" rows={6} defaultValue={project?.description ?? ""} className={inputClass} />
       </Field>
+
+      <div className="grid gap-4">
+        <VideoInput label="Project video" defaultValue={project?.videoUrl ?? ""} />
+      </div>
 
       <label className="flex items-center gap-2 text-sm text-slate-ink">
         <input type="checkbox" name="featured" defaultChecked={project?.featured} className="h-4 w-4 accent-[#c39a4a]" />

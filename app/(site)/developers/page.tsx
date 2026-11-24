@@ -25,12 +25,19 @@ export default async function DevelopersPage() {
       <section className="bg-sand py-14">
         <div className="container-x grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {developers.map((developer) => (
-            <Link
+            <div
               key={developer.id}
-              href={`/projects?developer=${developer.slug}`}
               className="card-hover flex flex-col justify-between rounded-sm border border-ink/10 bg-white p-6"
             >
               <div>
+                {developer.image && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={developer.image}
+                    alt={developer.name}
+                    className="mb-4 h-12 w-auto max-w-[10rem] object-contain"
+                  />
+                )}
                 <p className="font-display text-xl text-ink">{developer.name}</p>
                 <p className="mt-2 text-sm text-slate-ink">
                   {developer.description ??
@@ -39,9 +46,23 @@ export default async function DevelopersPage() {
               </div>
               <div className="mt-6 flex items-center justify-between border-t border-ink/10 pt-4 text-xs uppercase tracking-[0.16em] text-slate-ink">
                 <span>{developer._count.projects} listed projects</span>
-                <span className="text-gold">View →</span>
+                <span className="flex items-center gap-4">
+                  {developer.videoUrl && (
+                    <a
+                      href={developer.videoUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-gold hover:underline"
+                    >
+                      Video ↗
+                    </a>
+                  )}
+                  <Link href={`/projects?developer=${developer.slug}`} className="text-gold">
+                    View →
+                  </Link>
+                </span>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </section>

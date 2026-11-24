@@ -4,6 +4,7 @@ import ConsultForm from "@/components/ConsultForm";
 import ProjectCard from "@/components/ProjectCard";
 import { prisma } from "@/lib/prisma";
 import { formatEGP, formatEGPPerSqm } from "@/lib/constants";
+import { videoEmbedUrl } from "@/lib/media";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,8 @@ export default async function ProjectDetailPage({
   ]);
 
   if (!project) notFound();
+
+  const videoEmbed = project.videoUrl ? videoEmbedUrl(project.videoUrl) : null;
 
   const related = await prisma.project.findMany({
     where: { cityId: project.cityId, NOT: { id: project.id } },
@@ -83,6 +86,34 @@ export default async function ProjectDetailPage({
           </p>
         </div>
       </section>
+
+      {project.videoUrl && (
+        <section className="border-t border-ink/10 bg-white py-10">
+          <div className="container-x">
+            <div className="overflow-hidden rounded-sm border border-ink/10 bg-ink">
+              {videoEmbed ? (
+                <iframe
+                  src={videoEmbed}
+                  title={`${project.name} video`}
+                  className="aspect-video w-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  src={project.videoUrl}
+                  controls
+                  playsInline
+                  poster={project.image ?? undefined}
+                  className="aspect-video w-full bg-ink object-cover"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="bg-sand py-14">
         <div className="container-x grid gap-10 lg:grid-cols-[1.6fr_1fr]">

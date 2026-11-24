@@ -29,6 +29,7 @@ model City {
   projectCount Int       @default(0)
   description  String?
   image        String?
+  videoUrl     String?
   projects     Project[]
   leads        Lead[]
 }
@@ -39,6 +40,8 @@ model Developer {
   slug        String    @unique
   description String?
   website     String?
+  image       String?
+  videoUrl    String?
   projects    Project[]
 }
 
@@ -59,6 +62,7 @@ model Project {
   installmentYears Int?
   deliveryDate    String?
   image           String?
+  videoUrl        String?
   featured        Boolean   @default(false)
   status          String    @default("AVAILABLE") // AVAILABLE | COMING_SOON | SOLD_OUT
   createdAt       DateTime  @default(now())

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { formatEGP, formatEGPPerSqm } from "@/lib/constants";
 import { PageHeader, StatusBadge } from "@/components/ui";
 import { deleteProject } from "../actions";
+import ConfirmButton from "@/components/ConfirmButton";
 
 export const dynamic = "force-dynamic";
 
@@ -77,12 +78,12 @@ export default async function DashboardProjectsPage() {
                       </Link>
                       <form action={deleteProject}>
                         <input type="hidden" name="id" value={project.id} />
-                        <button
-                          type="submit"
+                        <ConfirmButton
+                          message={`Delete ${project.name}? It disappears from the website.`}
                           className="text-[11px] uppercase tracking-[0.14em] text-rose-600 hover:text-rose-800"
                         >
                           Delete
-                        </button>
+                        </ConfirmButton>
                       </form>
                     </div>
                   </td>

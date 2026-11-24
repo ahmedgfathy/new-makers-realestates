@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/dashboard/leads", label: "Leads", icon: "◈" },
   { href: "/dashboard/projects", label: "Projects", icon: "▤" },
   { href: "/dashboard/developers", label: "Developers", icon: "◍" },
+  { href: "/dashboard/areas", label: "Areas", icon: "◫" },
   { href: "/dashboard/settings", label: "Settings", icon: "◎" },
 ];
 
