@@ -270,7 +270,7 @@ function matchGroups(groups: KeywordGroup[], values: (string | null | undefined)
     .flatMap((group) => group.keywords);
 }
 
-/** Keywords for the project listing page, based on its active filters. */
+/** Unit-type keywords for the project listing filters. */
 export function categoryKeywords(category?: string | null) {
   switch (category) {
     case "Residential":
@@ -290,7 +290,7 @@ export function categoryKeywords(category?: string | null) {
   }
 }
 
-esport type ProjectKeywordInput = {
+export type ProjectKeywordInput = {
   name: string;
   slug: string;
   cityName: string;
