@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import ProjectCard from "@/components/ProjectCard";
 import { prisma } from "@/lib/prisma";
 import { PROJECT_CATEGORIES } from "@/lib/constants";
+import {
+  BASE_KEYWORDS,
+  categoryKeywords,
+  dedupeKeywords,
+  developerGroupKeywords,
+} from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +18,49 @@ type SearchParams = Promise<{
   developer?: string;
   q?: string;
 }>;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}): Promise<Metadata> {
+  const { city, category, developer } = await searchParams;
+
+  const [activeCity, activeDeveloper] = await Promise.all([
+    city ? prisma.city.findFirst({ where: { slug: city } }) : Promise.resolve(null),
+    developer ? prisma.developer.findFirst({ where: { slug: developer } }) : Promise.resolve(null),
+  ]);
+
+  const title = activeDeveloper
+    ? `${activeDeveloper.name} projects for sale`
+    : category && activeCity
+      ? `${category} for sale in ${activeCity.name}`
+      : activeCity
+        ? `Projects for sale in ${activeCity.name}`
+        : category
+          ? `${category} projects for sale`
+          : "Projects for sale in East Cairo";
+
+  const description = activeDeveloper
+    ? `Every ${activeDeveloper.name} project listed by Makers Real Estates, with official developer prices, written payment plans and delivery dates.`
+    : activeCity
+      ? `Primary units for sale in ${activeCity.name} — apartments, villas, duplexes and commercial space at official developer prices with written payment plans.`
+      : "Primary homes, villas and commercial units for sale across East Cairo — New Cairo, Mostakbal City and the New Administrative Capital, at official developer prices.";
+
+  const keywords = dedupeKeywords([
+    ...BASE_KEYWORDS,
+    ...categoryKeywords(category),
+    ...(activeCity
+      ? [
+          `Projects for sale in ${activeCity.name}`,
+          `عقارات للبيع في ${activeCity.nameAr ?? activeCity.name}`,
+        ]
+      : []),
+    ...(activeDeveloper ? developerGroupKeywords(activeDeveloper.name, activeDeveloper.slug) : []),
+  ]);
+
+  return { title, description, keywords };
+}
 
 export default async function ProjectsPage({ searchParams }: { searchParams: SearchParams }) {
   const { city, category, developer, q } = await searchParams;

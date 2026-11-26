@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { developerPageKeywords } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Real estate developers in Egypt",
+  description:
+    "Authorized sales partner for Madinet Masr, Palm Hills and SODIC — official developer prices, written payment plans and primary units across East Cairo.",
+  keywords: developerPageKeywords(),
+};
 
 export default async function DevelopersPage() {
   const developers = await prisma.developer.findMany({
