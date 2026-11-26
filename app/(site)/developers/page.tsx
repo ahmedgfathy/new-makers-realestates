@@ -1,18 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { developerPageKeywords } from "@/lib/seo";
+import { getI18n } from "@/lib/i18n/server";
+import { developers as devStrings } from "@/lib/i18n/pages";
+import { fill } from "@/lib/i18n/messages";
 
 export const dynamic = "force-dynamic";
-
-export const metadata: Metadata = {
-  title: "Real estate developers in Egypt",
-  description:
-    "Authorized sales partner for Madinet Masr, Palm Hills and SODIC — official developer prices, written payment plans and primary units across East Cairo.",
-  keywords: developerPageKeywords(),
-};
+export const metadata = { title: "Developers" };
 
 export default async function DevelopersPage() {
+  const { locale, t } = await getI18n();
+  const s = devStrings[locale];
   const developers = await prisma.developer.findMany({
     include: { _count: { select: { projects: true } } },
     orderBy: { name: "asc" },
@@ -22,15 +19,13 @@ export default async function DevelopersPage() {
     <>
       <section className="bg-ink py-16 text-white">
         <div className="container-x">
-          <p className="eyebrow text-gold">Partners</p>
-          <h1 className="mt-4 font-display text-4xl sm:text-5xl">Top developers</h1>
+          <p className="eyebrow text-gold">{s.eyebrow}</p>
+          <h1 className="mt-4 font-display text-4xl sm:text-5xl">{s.title}</h1>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/60">
-            We work directly with Egypt&apos;s most credible developers, so you get verified
-            inventory, real delivery records and negotiated payment plans.
+            {s.body}
           </p>
         </div>
       </section>
-
       <section className="bg-sand py-14">
         <div className="container-x grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {developers.map((developer) => (
@@ -40,7 +35,6 @@ export default async function DevelopersPage() {
             >
               <div>
                 {developer.image && (
-                  /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={developer.image}
                     alt={developer.name}
@@ -48,13 +42,12 @@ export default async function DevelopersPage() {
                   />
                 )}
                 <p className="font-display text-xl text-ink">{developer.name}</p>
-                <p className="mt-2 text-sm text-slate-ink">
-                  {developer.description ??
-                    "A trusted Makers partner with delivered projects across Egypt."}
+                <p className="mt-2 text-sm leading-relaxed text-slate-ink">
+                  {developer.description ?? s.fallback}
                 </p>
               </div>
               <div className="mt-6 flex items-center justify-between border-t border-ink/10 pt-4 text-xs uppercase tracking-[0.16em] text-slate-ink">
-                <span>{developer._count.projects} listed projects</span>
+                <span>{fill(s.listedProjects, { count: developer._count.projects })}</span>
                 <span className="flex items-center gap-4">
                   {developer.videoUrl && (
                     <a
@@ -63,11 +56,14 @@ export default async function DevelopersPage() {
                       rel="noreferrer"
                       className="text-gold hover:underline"
                     >
-                      Video ↗
+                      {s.video}
                     </a>
                   )}
-                  <Link href={`/projects?developer=${developer.slug}`} className="text-gold">
-                    View →
+                  <Link
+                    href={`/projects?developer=${developer.slug}`}
+                    className="text-gold hover:underline"
+                  >
+                    {s.view}
                   </Link>
                 </span>
               </div>
