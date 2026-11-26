@@ -52,7 +52,7 @@ export default async function LoginPage({
 
           {error && (
             <p className="mt-5 rounded-sm border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-              Incorrect email or password. Try the demo account below.
+              Incorrect email or password.
             </p>
           )}
 
@@ -66,7 +66,7 @@ export default async function LoginPage({
                 name="email"
                 type="email"
                 required
-                defaultValue="admin@makersrealestate.com"
+                autoComplete="username"
                 className="w-full rounded-sm border border-ink/15 bg-white px-4 py-3 text-sm outline-none focus:border-gold"
               />
             </label>
@@ -78,7 +78,7 @@ export default async function LoginPage({
                 name="password"
                 type="password"
                 required
-                defaultValue="Admin@12345"
+                autoComplete="current-password"
                 className="w-full rounded-sm border border-ink/15 bg-white px-4 py-3 text-sm outline-none focus:border-gold"
               />
             </label>
@@ -89,14 +89,6 @@ export default async function LoginPage({
               Sign in
             </button>
           </form>
-
-          <div className="mt-8 rounded-sm border border-ink/10 bg-white p-5 text-sm">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-ink">Demo accounts</p>
-            <div className="mt-3 space-y-2 text-slate-ink">
-              <p>Admin · <span className="text-ink">admin@makersrealestate.com</span> / Admin@12345</p>
-              <p>Agent · <span className="text-ink">sara@makersrealestate.com</span> / Agent@12345</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
