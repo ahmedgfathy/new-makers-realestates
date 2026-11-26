@@ -32,7 +32,7 @@ export default async function ContactPage({
             {[
               { label: "Phone", value: "+20 111 620 4890", href: "tel:+201116204890" },
               { label: "WhatsApp", value: "+20 102 508 0764", href: "https://wa.me/201025080764" },
-              { label: "Email", value: "hello@makersrealestate.com", href: "mailto:hello@makersrealestate.com" },
+              { label: "Email", value: "ahmedhassanmakers@gmail.com", href: "mailto:ahmedhassanmakers@gmail.com" },
             ].map((item) => (
               <div key={item.label} className="border-b border-ink/10 pb-6">
                 <p className="text-[10px] uppercase tracking-[0.18em] text-slate-ink">{item.label}</p>

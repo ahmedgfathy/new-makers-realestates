@@ -260,7 +260,7 @@ export default async function HomePage() {
             <div className="mt-8 space-y-3 text-sm text-white/70">
               <p><span className="text-white/40">Call</span> · <a href="tel:+201116204890" className="hover:text-gold">+20 111 620 4890</a></p>
               <p><span className="text-white/40">WhatsApp</span> · <a href="https://wa.me/201025080764" className="hover:text-gold">+20 102 508 0764</a></p>
-              <p><span className="text-white/40">Email</span> · <a href="mailto:hello@makersrealestate.com" className="hover:text-gold">hello@makersrealestate.com</a></p>
+              <p><span className="text-white/40">Email</span> · <a href="mailto:ahmedhassanmakers@gmail.com" className="hover:text-gold">ahmedhassanmakers@gmail.com</a></p>
             </div>
           </div>
           <ConsultForm cities={cities} redirectTo="/" />

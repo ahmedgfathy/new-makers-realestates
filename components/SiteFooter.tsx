@@ -48,7 +48,7 @@ export default function SiteFooter() {
           <p className="eyebrow text-gold">Get in touch</p>
           <ul className="mt-5 space-y-3 text-sm text-white/70">
             <li><a href="tel:+201116204890" className="hover:text-gold">+20 111 620 4890</a></li>
-            <li><a href="mailto:hello@makersrealestate.com" className="hover:text-gold">hello@makersrealestate.com</a></li>
+            <li><a href="mailto:ahmedhassanmakers@gmail.com" className="hover:text-gold">ahmedhassanmakers@gmail.com</a></li>
             <li className="text-white/50">New Cairo, Egypt</li>
           </ul>
           <a
