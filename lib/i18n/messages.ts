@@ -35,9 +35,9 @@ const en = {
   "home.titleAccent": "optimal decision.",
   "home.body":
     "Promising opportunities and a profitable investment across Egypt's fastest-growing districts — Fifth Settlement, Mostakbal City, New Heliopolis, the New Capital and the Sixth Settlement.",
-  "home.statDistricts": "{count} prime districts covered",
-  "home.statProjects": "{count} live projects",
-  "home.statDevelopers": "{count}+ developer partners",
+  "home.statDistricts": "prime districts covered",
+  "home.statProjects": "live projects",
+  "home.statDevelopers": "developer partners",
   "home.whereToInvest": "Where to invest",
   "home.primeAreas": "Prime areas we cover",
   "home.viewAllDestinations": "View all destinations",
@@ -55,8 +55,7 @@ const en = {
   "home.districtsCovered": "Districts covered",
   "home.villaAlt": "Luxury villa at dusk",
   "home.whyMakers": "Why Makers",
-  "home.whyTitle":
-    "A consultant on your side, not a salesperson on theirs.",
+  "home.whyTitle": "A consultant on your side, not a salesperson on theirs.",
   "home.why1Title": "Market intelligence",
   "home.why1Body":
     "Live pricing, delivery records and payment-plan comparisons across {projects} projects and {developers} developers.",
@@ -97,7 +96,7 @@ const en = {
   "cat.Medical": "Medical",
   "cat.Mixed Use": "Mixed Use",
   "cat.Coastal": "Coastal",
-} as const extends never ? never : Record<string, string>;
+};
 
 export type MessageKey = keyof typeof en;
 export type Messages = { [K in keyof typeof en]: string };
@@ -137,9 +136,9 @@ const ar: Messages = {
   "home.titleAccent": "القرار الصح.",
   "home.body":
     "فرص واعدة واستثمار مربح في أسرع مناطق مصر نموًا — التجمع الخامس، مستقبل سيتي، هليوبوليس الجديدة، العاصمة الإدارية والسادس من أكتوبر.",
-  "home.statDistricts": "{count} مناطق رئيسية بنغطيها",
-  "home.statProjects": "{count} مشروع متاح",
-  "home.statDevelopers": "{count}+ مطور شريك",
+  "home.statDistricts": "مناطق رئيسية بنغطيها",
+  "home.statProjects": "مشروع متاح",
+  "home.statDevelopers": "مطور شريك",
   "home.whereToInvest": "تستثمر فين؟",
   "home.primeAreas": "أهم المناطق اللي بنشتغل فيها",
   "home.viewAllDestinations": "شوف كل المناطق",

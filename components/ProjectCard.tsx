@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { formatEGP, formatEGPPerSqm } from "@/lib/constants";
+import type { Locale } from "@/lib/i18n/config";
+import { categoryLabel, fill, messages } from "@/lib/i18n/messages";
 
 type ProjectCardProps = {
+  locale?: Locale;
   project: {
     name: string;
     slug: string;
@@ -12,12 +15,16 @@ type ProjectCardProps = {
     downPayment: number | null;
     installmentYears: number | null;
     image: string | null;
-    city: { name: string };
+    city: { name: string; nameAr?: string | null };
     developer: { name: string } | null;
   };
 };
 
-export default function ProjectCard({ project }: ProjectCardProps) {
+export default function ProjectCard({ project, locale = "en" }: ProjectCardProps) {
+  const t = messages[locale];
+  const cityName =
+    locale === "ar" && project.city.nameAr ? project.city.nameAr : project.city.name;
+
   return (
     <Link
       href={`/projects/${project.slug}`}
@@ -31,16 +38,16 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink/70 to-transparent" />
-        <span className="absolute left-4 top-4 rounded-sm bg-white/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink">
-          {project.category}
+        <span className="absolute start-4 top-4 rounded-sm bg-white/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink">
+          {categoryLabel(locale, project.category)}
         </span>
-        <span className="absolute bottom-4 left-4 text-xs tracking-wide text-white">
-          {project.city.name}
+        <span className="absolute bottom-4 start-4 text-xs tracking-wide text-white">
+          {cityName}
         </span>
       </div>
       <div className="flex flex-1 flex-col p-5">
         <p className="text-[10px] uppercase tracking-[0.18em] text-slate-ink">
-          {project.developer?.name ?? "Makers Selection"}
+          {project.developer?.name ?? t["card.makersSelection"]}
         </p>
         <h3 className="mt-2 font-display text-lg leading-snug text-ink group-hover:text-gold">
           {project.name}
@@ -51,7 +58,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         <div className="mt-4 flex items-end justify-between border-t border-ink/10 pt-4">
           <div>
             <p className="text-[10px] uppercase tracking-[0.16em] text-slate-ink">
-              {project.priceFrom == null && project.pricePerSqm != null ? "Price per m²" : "Starting from"}
+              {project.priceFrom == null && project.pricePerSqm != null
+                ? t["card.perSqm"]
+                : t["card.startingFrom"]}
             </p>
             <p className="mt-1 text-sm font-semibold text-ink">
               {project.priceFrom != null
@@ -61,9 +70,13 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                   : formatEGP(null)}
             </p>
           </div>
-          <div className="text-right text-[11px] leading-relaxed text-slate-ink">
-            {project.downPayment != null && <p>{project.downPayment}% down</p>}
-            {project.installmentYears != null && <p>{project.installmentYears} yrs</p>}
+          <div className="text-end text-[11px] leading-relaxed text-slate-ink">
+            {project.downPayment != null && (
+              <p>{fill(t["card.down"], { value: project.downPayment })}</p>
+            )}
+            {project.installmentYears != null && (
+              <p>{fill(t["card.years"], { value: project.installmentYears })}</p>
+            )}
           </div>
         </div>
       </div>

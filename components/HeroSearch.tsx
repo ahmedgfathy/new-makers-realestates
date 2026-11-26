@@ -2,19 +2,24 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import type { Locale } from "@/lib/i18n/config";
+import { messages } from "@/lib/i18n/messages";
 
 type Option = { label: string; value: string };
 
 export default function HeroSearch({
   cities,
   categories,
+  locale = "en",
 }: {
   cities: Option[];
   categories: Option[];
+  locale?: Locale;
 }) {
   const router = useRouter();
   const [city, setCity] = useState("");
   const [category, setCategory] = useState("");
+  const t = messages[locale];
 
   function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -31,14 +36,14 @@ export default function HeroSearch({
     >
       <label className="block">
         <span className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-ink">
-          Destination
+          {t["hero.destination"]}
         </span>
         <select
           value={city}
           onChange={(e) => setCity(e.target.value)}
           className="w-full rounded-sm border border-ink/15 bg-transparent px-3 py-2.5 text-sm text-ink outline-none focus:border-gold"
         >
-          <option value="">All cities</option>
+          <option value="">{t["hero.allCities"]}</option>
           {cities.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -49,14 +54,14 @@ export default function HeroSearch({
 
       <label className="block">
         <span className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-ink">
-          Property type
+          {t["hero.propertyType"]}
         </span>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           className="w-full rounded-sm border border-ink/15 bg-transparent px-3 py-2.5 text-sm text-ink outline-none focus:border-gold"
         >
-          <option value="">All types</option>
+          <option value="">{t["hero.allTypes"]}</option>
           {categories.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -69,7 +74,7 @@ export default function HeroSearch({
         type="submit"
         className="h-[46px] rounded-sm bg-gold px-8 text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:bg-gold-soft"
       >
-        Search
+        {t["hero.search"]}
       </button>
     </form>
   );
